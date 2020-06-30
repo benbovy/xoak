@@ -221,15 +221,25 @@ Possible issues are:
 - keeping all *indexer* data in memory at the same time
 - selection (query) time
 
-Some potential sources of inspiration:
+## 8. Useful references
+
+- Jake VanderPlas' [blog
+  post](https://jakevdp.github.io/blog/2013/04/29/benchmarking-nearest-neighbor-searches-in-python/)
+  on Ball tree and k-d tree benchmarks.
+
+- A [comparison of spatial
+  indexes](https://hal.archives-ouvertes.fr/hal-01701560/document) implemented
+  in Python.
 
 - This
   [gist](https://gist.github.com/brendancol/a3dd4a35ecd94660411112999923d561),
   where a tree index is built for each data chunk and where each tree is queried
   during selection. This could probably be optimized a bit.
+
 - A couple of papers on distributed R-trees:
   [SD-Rtree](https://ieeexplore.ieee.org/document/4221678) + follow-up
   [paper](https://dl.acm.org/doi/10.1145/1341012.1341019) and
   [DD-Rtree](https://ieeexplore.ieee.org/document/7840586).
+
 - A [survey](https://arxiv.org/ftp/arxiv/papers/1507/1507.05501.pdf) of P2P
   n-dimensional indexing structures.
