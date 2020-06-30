@@ -228,7 +228,8 @@ Some potential sources of inspiration:
   where a tree index is built for each data chunk and where each tree is queried
   during selection. This could probably be optimized a bit.
 - A couple of papers on distributed R-trees:
-  [SD-Rtree](https://ieeexplore.ieee.org/document/4221678) and
+  [SD-Rtree](https://ieeexplore.ieee.org/document/4221678) + follow-up
+  [paper](https://dl.acm.org/doi/10.1145/1341012.1341019) and
   [DD-Rtree](https://ieeexplore.ieee.org/document/7840586).
 - A [survey](https://arxiv.org/ftp/arxiv/papers/1507/1507.05501.pdf) of P2P
   n-dimensional indexing structures.
