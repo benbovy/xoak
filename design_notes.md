@@ -1,4 +1,4 @@
-# xoak Design notes
+# xoak design notes
 
 ## 1. Scope
 
@@ -230,3 +230,5 @@ Some potential sources of inspiration:
 - A couple of papers on distributed R-trees:
   [SD-Rtree](https://ieeexplore.ieee.org/document/4221678) and
   [DD-Rtree](https://ieeexplore.ieee.org/document/7840586).
+- A [survey](https://arxiv.org/ftp/arxiv/papers/1507/1507.05501.pdf) of P2P
+  n-dimensional indexing structures.
