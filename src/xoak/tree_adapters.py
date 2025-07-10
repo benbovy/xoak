@@ -66,8 +66,8 @@ class SklearnBallTreeAdapter(TreeAdapter):
     def query(self, points: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         return self._balltree.query(points)
 
-    def equals(self, other: SklearnKDTreeAdapter) -> bool:
-        return np.array_equal(self._balltree.data, other._kdtree.data)
+    def equals(self, other: SklearnBallTreeAdapter) -> bool:
+        return np.array_equal(self._balltree.data, other._balltree.data)
 
 
 class SklearnGeoBallTreeAdapter(TreeAdapter):
@@ -89,10 +89,13 @@ class SklearnGeoBallTreeAdapter(TreeAdapter):
     def __init__(self, points: np.ndarray, options: Mapping[str, Any]):
         from sklearn.neighbors import BallTree
 
+        opts = dict(options)
+        opts.update({'metric': 'haversine'})
+
         self._balltree = BallTree(np.deg2rad(points), **options)
 
     def query(self, points: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         return self._balltree.query(np.deg2rad(points))
 
-    def equals(self, other: SklearnKDTreeAdapter) -> bool:
-        return np.array_equal(self._balltree.data, other._kdtree.data)
+    def equals(self, other: SklearnGeoBallTreeAdapter) -> bool:
+        return np.array_equal(self._balltree.data, other._balltree.data)
