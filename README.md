@@ -1,6 +1,6 @@
 # xoak
 
-[![Tests](https://github.com/xarray-contrib/xoak/workflows/test/badge.svg)](https://github.com/xarray-contrib/xoak/actions?query=workflow%3Atest)
+[![Tests](https://github.com/xarray-contrib/xoak/actions/workflows/test.yaml/badge.svg?branch=master&event=push)](https://github.com/xarray-contrib/xproj/actions/workflows/test.yaml?query=branch%3Amaster+event%3Apush)
 [![Coverage](https://codecov.io/gh/xarray-contrib/xoak/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/github/xarray-contrib/xoak?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/xoak/badge/?version=latest)](https://xoak.readthedocs.io/en/latest/?badge=latest)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/xarray-contrib/xoak/master?filepath=doc%2Fexamples)
