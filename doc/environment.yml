@@ -1,0 +1,18 @@
+name: xoak
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - dask
+  - ipykernel
+  - matplotlib-base
+  - nbsphinx
+  - numpy
+  - pys2index
+  - scikit-learn
+  - sphinx
+  - sphinx-autosummary-accessors
+  - pydata-sphinx-theme=0.15.4
+  - sphinx-book-theme=1.1.4
+  - xarray
+  - pip

@@ -3,6 +3,15 @@
 Release Notes
 =============
 
+v0.1.2 (20 November 2025)
+-------------------------
+
+Maintenance
+~~~~~~~~~~~
+
+- Replace deprecated pkg_resources (:pull:`45`).
+- CI, packaging and doc maintenance (complete revamp) (:pull:`47`).
+
 v0.1.1 (4 August 2021)
 ----------------------
 

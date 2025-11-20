@@ -1,15 +1,20 @@
 # Required
 version: 2
 
-# Build documentation in the doc/ directory with Sphinx
+build:
+  os: "ubuntu-20.04"
+  tools:
+    python: "mambaforge-4.10"
+
 sphinx:
   configuration: doc/conf.py
 
 conda:
-    environment: environment_doc.yml
+    environment: doc/environment.yml
 
 python:
-  version: 3.8
   install:
     - method: pip
       path: .
+
+formats: []

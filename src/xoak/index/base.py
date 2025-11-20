@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 import abc
 import warnings
+from collections.abc import Mapping
 from contextlib import suppress
-from typing import Any, Dict, List, Mapping, Tuple, Type, TypeVar, Union
+from typing import Any, TypeVar
 
 import numpy as np
 
-Index = TypeVar('Index')
+Index = TypeVar("Index")
 
 
 class IndexAdapter(abc.ABC):
@@ -42,7 +45,7 @@ class IndexAdapter(abc.ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def query(self, index: Index, points: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    def query(self, index: Index, points: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Query points/samples,
 
         Parameters
@@ -69,13 +72,13 @@ class IndexRegistrationWarning(Warning):
     """Warning for conflicts in index registration."""
 
 
-class IndexRegistry(Mapping[str, Type[IndexAdapter]]):
+class IndexRegistry(Mapping[str, type[IndexAdapter]]):
     """A registry of all indexes adapters that can be used to select data
     with xoak.
 
     """
 
-    _default_indexes: Dict[str, Type[IndexAdapter]] = {}
+    _default_indexes: dict[str, type[IndexAdapter]] = {}
 
     def __init__(self, use_default=True):
         """Creates a new index registry.
@@ -107,9 +110,9 @@ class IndexRegistry(Mapping[str, Type[IndexAdapter]]):
 
         """
 
-        def wrap(cls: Type[IndexAdapter]):
+        def wrap(cls: type[IndexAdapter]):
             if not issubclass(cls, IndexAdapter):
-                raise TypeError('can only register IndexAdapter subclasses.')
+                raise TypeError("can only register IndexAdapter subclasses.")
 
             if name in self._indexes:
                 warnings.warn(
@@ -125,20 +128,20 @@ class IndexRegistry(Mapping[str, Type[IndexAdapter]]):
         return wrap
 
     def __getattr__(self, name):
-        if name not in {'__dict__', '__setstate__'}:
+        if name not in {"__dict__", "__setstate__"}:
             # this avoids an infinite loop when pickle looks for the
             # __setstate__ attribute before the xarray object is initialized
             with suppress(KeyError):
                 return self._indexes[name]
-        raise AttributeError(f'IndexRegistry object has no attribute {name!r}')
+        raise AttributeError(f"IndexRegistry object has no attribute {name!r}")
 
     def __setattr__(self, name, value):
-        if name == '_indexes':
+        if name == "_indexes":
             object.__setattr__(self, name, value)
         else:
             raise AttributeError(
-                f'cannot set attribute {name!r} on a IndexRegistry object. '
-                'Use `.register()` to add a new index adapter to the registry.'
+                f"cannot set attribute {name!r} on a IndexRegistry object. "
+                "Use `.register()` to add a new index adapter to the registry."
             )
 
     def __dir__(self):
@@ -158,8 +161,8 @@ class IndexRegistry(Mapping[str, Type[IndexAdapter]]):
         return len(self._indexes)
 
     def __repr__(self):
-        header = f'<IndexRegistry ({len(self._indexes)} indexes)>\n'
-        return header + '\n'.join([name for name in self._indexes])
+        header = f"<IndexRegistry ({len(self._indexes)} indexes)>\n"
+        return header + "\n".join([name for name in self._indexes])
 
 
 def register_default(name: str):
@@ -178,7 +181,7 @@ def register_default(name: str):
 
     """
 
-    def decorator(cls: Type[IndexAdapter]):
+    def decorator(cls: type[IndexAdapter]):
         if cls.__doc__ is not None:
             cls.__doc__ += doc_extra
         else:
@@ -190,8 +193,7 @@ def register_default(name: str):
     return decorator
 
 
-def normalize_index(name_or_cls: Union[str, Any]) -> Type[IndexAdapter]:
-
+def normalize_index(name_or_cls: str | Any) -> type[IndexAdapter]:
     if isinstance(name_or_cls, str):
         cls = IndexRegistry._default_indexes[name_or_cls]
     else:
@@ -209,14 +211,14 @@ class XoakIndexWrapper:
 
     """
 
-    _query_result_dtype: List[Tuple[str, Any]] = [
-        ('distances', np.double),
-        ('indices', np.intp),
+    _query_result_dtype: list[tuple[str, Any]] = [
+        ("distances", np.double),
+        ("indices", np.intp),
     ]
 
     def __init__(
         self,
-        index_adapter: Union[str, Type[IndexAdapter]],
+        index_adapter: str | type[IndexAdapter],
         points: np.ndarray,
         offset: int,
         **kwargs,
@@ -235,7 +237,7 @@ class XoakIndexWrapper:
         distances, positions = self._index_adapter.query(self._index, points)
 
         result = np.empty(shape=points.shape[0], dtype=self._query_result_dtype)
-        result['distances'] = distances.ravel().astype(np.double)
-        result['indices'] = positions.ravel().astype(np.intp) + self._offset
+        result["distances"] = distances.ravel().astype(np.double)
+        result["indices"] = positions.ravel().astype(np.intp) + self._offset
 
         return result[:, None]

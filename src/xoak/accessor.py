@@ -1,4 +1,7 @@
-from typing import Any, Hashable, Iterable, List, Mapping, Tuple, Type, Union
+from __future__ import annotations
+
+from collections.abc import Hashable, Iterable, Mapping
+from typing import Any
 
 import numpy as np
 import xarray as xr
@@ -9,10 +12,10 @@ from .index.base import Index, IndexAdapter, XoakIndexWrapper
 try:
     from dask.delayed import Delayed
 except ImportError:  # pragma: no cover
-    Delayed = Type[None]
+    Delayed = type[None]
 
 
-def coords_to_point_array(coords: List[Any]) -> np.ndarray:
+def coords_to_point_array(coords: list[Any]) -> np.ndarray:
     """Re-arrange data from a list of xarray coordinates into a 2-d array of shape
     (npoints, ncoords).
 
@@ -34,12 +37,12 @@ def coords_to_point_array(coords: List[Any]) -> np.ndarray:
     return X
 
 
-IndexAttr = Union[XoakIndexWrapper, Iterable[XoakIndexWrapper], Iterable[Delayed]]
-IndexType = Union[str, Type[IndexAdapter]]
+IndexAttr = XoakIndexWrapper | Iterable[XoakIndexWrapper] | Iterable[Delayed]
+IndexType = str | type[IndexAdapter]
 
 
-@xr.register_dataarray_accessor('xoak')
-@xr.register_dataset_accessor('xoak')
+@xr.register_dataarray_accessor("xoak")
+@xr.register_dataset_accessor("xoak")
 class XoakAccessor:
     """A xarray Dataset or DataArray extension for indexing irregular,
     n-dimensional data using a ball tree.
@@ -48,11 +51,11 @@ class XoakAccessor:
 
     _index: IndexAttr
     _index_type: IndexType
-    _index_coords: Tuple[str]
-    _index_coords_dims: Tuple[Hashable, ...]
-    _index_coords_shape: Tuple[int, ...]
+    _index_coords: tuple[str, ...]
+    _index_coords_dims: tuple[Hashable, ...]
+    _index_coords_shape: tuple[int, ...]
 
-    def __init__(self, xarray_obj: Union[xr.Dataset, xr.DataArray]):
+    def __init__(self, xarray_obj: xr.Dataset | xr.DataArray):
         self._xarray_obj = xarray_obj
 
     def _build_index_forest_delayed(self, X, persist=False, **kwargs) -> IndexAttr:
@@ -73,7 +76,11 @@ class XoakAccessor:
             return tuple(indexes)
 
     def set_index(
-        self, coords: Iterable[str], index_type: IndexType, persist: bool = True, **kwargs
+        self,
+        coords: Iterable[str],
+        index_type: IndexType,
+        persist: bool = True,
+        **kwargs,
     ):
         """Create an index tree from a subset of coordinates of the DataArray / Dataset.
 
@@ -102,7 +109,7 @@ class XoakAccessor:
 
         if len(set([c.dims for c in coord_objs])) > 1:
             raise ValueError(
-                'Coordinates {coords} must all have the same dimensions in the same order'
+                "Coordinates {coords} must all have the same dimensions in the same order"
             )
 
         self._index_coords_dims = coord_objs[0].dims
@@ -116,14 +123,14 @@ class XoakAccessor:
             self._index = self._build_index_forest_delayed(X, persist=persist, **kwargs)
 
     @property
-    def index(self) -> Union[None, Index, Iterable[Index]]:
+    def index(self) -> None | Index | Iterable[Index]:
         """Returns the underlying index object(s), or ``None`` if no index has
         been set yet.
 
         May trigger computation of lazy indexes.
 
         """
-        if not getattr(self, '_index', False):
+        if not getattr(self, "_index", False):
             return None
         elif isinstance(self._index, XoakIndexWrapper):
             return self._index.index
@@ -139,7 +146,7 @@ class XoakAccessor:
         if isinstance(X, np.ndarray) and isinstance(self._index, XoakIndexWrapper):
             # directly call index wrapper's query method
             res = self._index.query(X)
-            results = res['indices'][:, 0]
+            results = res["indices"][:, 0]
 
         else:
             # Two-stage lazy query with dask
@@ -157,7 +164,8 @@ class XoakAccessor:
 
             # 1st "map" stage:
             # - execute `IndexWrapperCls.query` for each query array chunk and each index instance
-            # - concatenate all distances/positions results in two dask arrays of shape (n_points, n_indexes)
+            # - concatenate all distances/positions results in two dask arrays of shape
+            #   (n_points, n_indexes)
 
             res_chunk = []
 
@@ -176,8 +184,8 @@ class XoakAccessor:
                 res_chunk.append(da.concatenate(res_chunk_idx, axis=1))
 
             map_results = da.concatenate(res_chunk, axis=0)
-            distances = map_results['distances']
-            indices = map_results['indices']
+            distances = map_results["distances"]
+            indices = map_results["indices"]
 
             # 2nd "reduce" stage:
             # - brute force lookup over the indexes dimension (columns)
@@ -186,11 +194,11 @@ class XoakAccessor:
 
             results = da.blockwise(
                 lambda arr, icol: np.take_along_axis(arr, icol[:, None], 1).squeeze(),
-                'i',
+                "i",
                 indices,
-                'ik',
+                "ik",
                 indices_col,
-                'i',
+                "i",
                 dtype=np.intp,
                 concatenate=True,
             )
@@ -212,7 +220,7 @@ class XoakAccessor:
         indexer_shapes = [idx.shape for idx in indexers.values()]
 
         if len(set(indexer_dims)) > 1:
-            raise ValueError('All indexers must have the same dimensions.')
+            raise ValueError("All indexers must have the same dimensions.")
 
         u_indices = list(np.unravel_index(indices.ravel(), self._index_coords_shape))
 
@@ -225,8 +233,8 @@ class XoakAccessor:
         return pos_indexers
 
     def sel(
-        self, indexers: Mapping[Hashable, Any] = None, **indexers_kwargs: Any
-    ) -> Union[xr.Dataset, xr.DataArray]:
+        self, indexers: Mapping[Hashable, Any] | None = None, **indexers_kwargs: Any
+    ) -> xr.Dataset | xr.DataArray:
         """Selection based on a ball tree index.
 
         The index must have been already built using `xoak.set_index()`.
@@ -244,12 +252,12 @@ class XoakAccessor:
         coordinates are chunked.
 
         """
-        if not getattr(self, '_index', False):
+        if not getattr(self, "_index", False):
             raise ValueError(
-                'The index(es) has/have not been built yet. Call `.xoak.set_index()` first'
+                "The index(es) has/have not been built yet. Call `.xoak.set_index()` first"
             )
 
-        indexers = either_dict_or_kwargs(indexers, indexers_kwargs, 'xoak.sel')
+        indexers = either_dict_or_kwargs(indexers, indexers_kwargs, "xoak.sel")
         indices = self._query(indexers)
 
         if not isinstance(indices, np.ndarray):
