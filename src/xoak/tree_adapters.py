@@ -54,7 +54,10 @@ class SklearnKDTreeAdapter(TreeAdapter):
 
 
 class SklearnBallTreeAdapter(TreeAdapter):
-    """:py:class:`sklearn.neighbors.BallTree` adapter for :py:class:`~xarray.indexes.NDPointIndex`."""
+    """:py:class:`sklearn.neighbors.BallTree` adapter for
+    :py:class:`~xarray.indexes.NDPointIndex`.
+
+    """
 
     _balltree: sklearn.neighbors.BallTree
 
@@ -90,7 +93,7 @@ class SklearnGeoBallTreeAdapter(TreeAdapter):
         from sklearn.neighbors import BallTree
 
         opts = dict(options)
-        opts.update({'metric': 'haversine'})
+        opts.update({"metric": "haversine"})
 
         self._balltree = BallTree(np.deg2rad(points), **options)
 
