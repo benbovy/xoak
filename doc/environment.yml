@@ -10,7 +10,7 @@ dependencies:
   - numpy
   - pys2index
   - scikit-learn
-  - sphinx
+  - sphinx=8.2.3
   - sphinx-autosummary-accessors
   - pydata-sphinx-theme=0.15.4
   - sphinx-book-theme=1.1.4
