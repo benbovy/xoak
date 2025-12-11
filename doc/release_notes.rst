@@ -3,8 +3,8 @@
 Release Notes
 =============
 
-v0.2.0 (Unreleased)
--------------------
+v0.2.0 (11 December 2025)
+-------------------------
 
 Features
 ~~~~~~~~
@@ -23,7 +23,6 @@ Deprecations
   See documentation examples for more details (:pull:`44`).
 - Xoak experimental support for chunked coordinates (Dask arrays) has been
   deprecated (:pull:`44`).
-
 
 v0.1.2 (20 November 2025)
 -------------------------
