@@ -1,12 +1,22 @@
 from importlib.metadata import version
 
-from .accessor import XoakAccessor
-from .index import IndexAdapter, IndexRegistry
+from xoak.accessor import XoakAccessor
+from xoak.index import IndexAdapter, IndexRegistry
+from xoak.tree_adapters import (
+    S2PointTreeAdapter,
+    SklearnBallTreeAdapter,
+    SklearnGeoBallTreeAdapter,
+    SklearnKDTreeAdapter,
+)
 
 __all__ = [
-    "XoakAccessor",
     "IndexAdapter",
     "IndexRegistry",
+    "SklearnBallTreeAdapter",
+    "SklearnGeoBallTreeAdapter",
+    "SklearnKDTreeAdapter",
+    "S2PointTreeAdapter",
+    "XoakAccessor",
 ]
 
 __version__ = version("xoak")

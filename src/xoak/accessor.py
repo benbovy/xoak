@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from collections.abc import Hashable, Iterable, Mapping
 from typing import Any
 
@@ -87,6 +88,12 @@ class XoakAccessor:
         If the given coordinates are chunked (Dask arrays), this method will (lazily) create
         a forest of index trees (one tree per chunk of the flattened coordinate arrays).
 
+        .. warning::
+           This method has been deprecated. Please use the Xarray API instead, e.g.,
+           ``ds.set_xindex([...], xarray.indexes.NDPointIndex, tree_adapter_cls=...)``.
+
+           Support for chunked Dask coordinates has been deprecated as well.
+
         Parameters
         ----------
         coords : iterable
@@ -118,8 +125,22 @@ class XoakAccessor:
         X = coords_to_point_array([self._xarray_obj[c] for c in coords])
 
         if isinstance(X, np.ndarray):
+            warnings.warn(
+                "Setting the index via the xoak accessor is deprecated and will be removed "
+                f"in a future version. Instead of `.xoak.set_index({coords!r}, ...)`, "
+                f"use the Xarray API `.set_xindex({coords!r}, xarray.indexes.NDPointIndex, "
+                "tree_adapter_cls=...)`",
+                FutureWarning,
+                stacklevel=2,
+            )
             self._index = XoakIndexWrapper(self._index_type, X, 0, **kwargs)
         else:
+            warnings.warn(
+                "Setting a lazy index from chunked coordinates is a deprecated experimental "
+                "feature and will be removed in a future version.",
+                FutureWarning,
+                stacklevel=2,
+            )
             self._index = self._build_index_forest_delayed(X, persist=persist, **kwargs)
 
     @property
@@ -237,6 +258,11 @@ class XoakAccessor:
     ) -> xr.Dataset | xr.DataArray:
         """Selection based on a ball tree index.
 
+        .. warning::
+           This method has been deprecated. Please use the Xarray API instead
+           ``ds.sel(...)`` after setting an ``xarray.indexes.NDPointIndex`` with one
+           of the tree adapter classes available in Xoak.
+
         The index must have been already built using `xoak.set_index()`.
 
         It behaves mostly like :meth:`xarray.Dataset.sel` and
@@ -252,6 +278,15 @@ class XoakAccessor:
         coordinates are chunked.
 
         """
+        warnings.warn(
+            "Data selection via `.xoak.sel()` is deprecated and will be removed in a future "
+            "version. Instead of `.xoak.sel(...)`, use directly the Xarray API `.sel(...)` "
+            "after setting an `xarray.indexes.NDPointIndex` with one of the tree adapter classes "
+            "avaiable in Xoak.",
+            FutureWarning,
+            stacklevel=2,
+        )
+
         if not getattr(self, "_index", False):
             raise ValueError(
                 "The index(es) has/have not been built yet. Call `.xoak.set_index()` first"

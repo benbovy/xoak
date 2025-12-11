@@ -5,6 +5,30 @@ from scipy.spatial import cKDTree
 import xoak  # noqa: F401
 
 
+def test_deprecation_warnings() -> None:
+    ds = xr.Dataset(
+        coords={
+            "x": (("a", "b"), [[0, 1], [2, 3]]),
+            "y": (("a", "b"), [[0, 1], [2, 3]]),
+        }
+    )
+    indexer = xr.Dataset(
+        coords={
+            "x": ("p", [1.2, 2.9]),
+            "y": ("p", [1.2, 2.9]),
+        }
+    )
+
+    with pytest.warns(FutureWarning):
+        ds.xoak.set_index(["x", "y"], "scipy_kdtree")
+
+    with pytest.warns(FutureWarning):
+        ds.chunk().xoak.set_index(["x", "y"], "scipy_kdtree")
+
+    with pytest.warns(FutureWarning):
+        ds.xoak.sel(x=indexer.x, y=indexer.y)
+
+
 def test_set_index_error():
     ds = xr.Dataset(
         coords={

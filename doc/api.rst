@@ -5,10 +5,31 @@ API Reference
 
 This page provides an auto-generated summary of Xoak's API.
 
+.. currentmodule:: xoak
+
+Xarray NDPointIndex tree adapters
+---------------------------------
+
+The following classes may be used with :py:class:`xarray.indexes.NDPointIndex`, they can
+be passed as ``tree_adapter_cls`` option value via :py:meth:`xarray.Dataset.set_xindex` or
+:py:meth:`xarray.DataArray.set_xindex`.
+
+.. autosummary::
+   :toctree: _api_generated/
+
+    S2PointTreeAdapter
+    SklearnBallTreeAdapter
+    SklearnGeoBallTreeAdapter
+    SklearnKDTreeAdapter
+
 .. currentmodule:: xarray
 
 Dataset.xoak
 ------------
+
+.. warning::
+
+   This API is deprecated and will be removed in a future version of Xoak.
 
 This accessor extends :py:class:`xarray.Dataset` with all the methods and
 properties listed below. Proper use of this accessor should be like:
@@ -40,6 +61,10 @@ properties listed below. Proper use of this accessor should be like:
 DataArray.xoak
 --------------
 
+.. warning::
+
+   This API is deprecated and will be removed in a future version of Xoak.
+
 The accessor above is also registered for :py:class:`xarray.DataArray`.
 
 **Properties**
@@ -58,39 +83,3 @@ The accessor above is also registered for :py:class:`xarray.DataArray`.
 
     DataArray.xoak.set_index
     DataArray.xoak.sel
-
-Indexes
--------
-
-.. currentmodule:: xoak
-
-.. autosummary::
-   :toctree: _api_generated/
-
-    IndexAdapter
-    IndexRegistry
-
-**Xoak's built-in index adapters**
-
-.. currentmodule:: xoak.index.scipy_adapters
-
-.. autosummary::
-   :toctree: _api_generated/
-
-    ScipyKDTreeAdapter
-
-.. currentmodule:: xoak.index.sklearn_adapters
-
-.. autosummary::
-   :toctree: _api_generated/
-
-    SklearnKDTreeAdapter
-    SklearnBallTreeAdapter
-    SklearnGeoBallTreeAdapter
-
-.. currentmodule:: xoak.index.s2_adapters
-
-.. autosummary::
-   :toctree: _api_generated/
-
-    S2PointIndexAdapter
